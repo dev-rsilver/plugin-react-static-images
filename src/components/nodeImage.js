@@ -4,6 +4,7 @@
  */
 
 import path from 'path'
+import url from 'url'
 const fs = require('fs')
 import { PluginOptions } from '../node.api'
 const process = require('child_process')
@@ -14,7 +15,8 @@ var Images = function() { }
   * Get image(s) from files or folders.
   * @param source an object, or array of objects, consisting of the following:
   *               { type: "file", value: file_path }
-  *               { type: "folder", value folder_path }
+  *               { type: "folder", value: folder_path }
+  *               { type: "url", value: url }
   * @param transformName    The name of a transform to utilize on the sources. Transform name
   *                         must be the name of a built-in transform, or the name of a transform
   *                         passed to the image plugin in static.config.js. Defaults to null,
@@ -138,6 +140,20 @@ Images.get = async function(sources, transformName = null, opts = {}) {
                     })
                     break
 
+                case "url":
+                    //Increase filesToProcess before calling send() below since send is asynchronous
+                    filesToProcess++
+
+                    ImageProcesses[imageProcessIndex].send({
+                        type: type,
+                        value: value,
+                        transform: transform,
+                        transformOptions: opts,
+                        outputRoot: PluginOptions.OutputRoot,
+                        maxAssetSize: PluginOptions.MaxAssetSize
+                    })
+                    break
+
                 default: throw new Error("Unknown type")
             }
         }
@@ -229,6 +245,23 @@ Images.get = async function(sources, transformName = null, opts = {}) {
                         throw new Error(`Path '${sources[i].value}' does not exist or is not a file.`)
                     }
                     break
+                case "url":
+                    let url = null
+                    
+                    try {
+                        url = new URL(sources[i].value)
+                    } catch(e) {
+                        throw new Error(`Url '${sources[i].value}' is an invalid url.`)
+                    }
+
+                    if(url.pathname === undefined) {
+                        throw new Error(`Url '${sources[i].value}' must have a path.`)
+                    }
+
+                    hasImageExtension(sources[i].value)
+                    break
+                default:
+                    throw new Error("Unknown type")
             }
         }
 
