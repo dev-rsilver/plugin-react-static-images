@@ -45,6 +45,8 @@ Sources is either a single object, or an array of objects, consisting of the fol
 
 ```{type: "file", value: pathString}```
 
+```{type: "url", value: urlString}```
+
 If you supply a single source, then Images.get will return a single image. If you supply an array of sources, then Images.get will return an array of images. If your source is a folder, all images (.jpg, .jpeg, .png, .bmp, .tiff) that are located in the folder will be ingested.
 
 *TransformName*

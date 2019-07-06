@@ -71,7 +71,7 @@ beforeAll(() => {
             setTimeout(() => {
                 forkCallback({
                     //Send back the name of the image file
-                    image: "static/" + path.basename(message.value)
+                    image: "/static/" + path.basename(message.value)
                 })
             }, 2000)
         },
@@ -135,7 +135,7 @@ test('file extension fails', async() => {
 test('processes image single object return value', async () => {
     //The file doesn't actually exist. See mocked functions above.
     let image = await Images.get({ type: "file", value: "./tests/test1.jpg" })
-    expect(image).toEqual({ image: 'static/test1.jpg' })
+    expect(image).toEqual({ image: '/static/test1.jpg' })
 })
 
 test('processes images array return value', async () => {
@@ -193,7 +193,7 @@ test('no transforms, builtin', async () => {
 
     nodeApi.default()
 
-    await expect(Images.get({ type: "file", value: "./tests/test1.jpg" }, "builtin")).resolves.toMatchObject({"image": "static/test1.jpg"})
+    await expect(Images.get({ type: "file", value: "./tests/test1.jpg" }, "builtin")).resolves.toMatchObject({"image": "/static/test1.jpg"})
 
     nodeApi.default = originalDefault
     nodeApi.default()
