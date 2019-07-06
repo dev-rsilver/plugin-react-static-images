@@ -246,15 +246,15 @@ Images.get = async function(sources, transformName = null, opts = {}) {
                     }
                     break
                 case "url":
-                    let url = null
+                    let urlCheck = null
                     
                     try {
-                        url = new URL(sources[i].value)
+                        urlCheck = new URL(sources[i].value)
                     } catch(e) {
                         throw new Error(`Url '${sources[i].value}' is an invalid url.`)
                     }
 
-                    if(url.pathname === undefined) {
+                    if(urlCheck.pathname === undefined) {
                         throw new Error(`Url '${sources[i].value}' must have a path.`)
                     }
 
