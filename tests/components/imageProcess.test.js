@@ -22,7 +22,8 @@ describe('non-existent', () => {
         }
         
         await expect(imageProcess({
-            transform: nonExistentTransformPath
+            transform: nonExistentTransformPath,
+            type: "file"
         })).rejects.toThrow("does not exist")
     })
     
@@ -36,6 +37,7 @@ describe('non-existent', () => {
     
         await imageProcess({
             id: 1,
+            type: "file",
             value: "./tests/images/input/test1.jpg",
             outputRoot: "./test/images/output/",
             maxAssetSize: 10000,
@@ -91,6 +93,7 @@ describe('process image via copy (no transform)', () => {
     
         let result = await imageProcess({ 
             id: 1,
+            type: "file",
             value: img,
             outputRoot: path.resolve("./test/images/output/"),
             maxAssetSize: 10000,
@@ -98,7 +101,7 @@ describe('process image via copy (no transform)', () => {
         })
     
         //The image is large enough that a copy operation should result in a url.
-        expect(result.image.data).toEqual("static/test1.jpg")
+        expect(result.image.data).toEqual("/static/test1.jpg")
     })
 
     test('process image via file copy base64', async () => {
@@ -110,6 +113,7 @@ describe('process image via copy (no transform)', () => {
 
         let result = await imageProcess({ 
             id: 1,
+            type: "file",
             value: img,
             outputRoot: path.resolve("./test/images/output/"),
             maxAssetSize: 10000,
@@ -151,6 +155,7 @@ describe('process image via transform', () => {
         let result = await imageProcess({ 
             id: 1,
             value: img,
+            type: "file",
             outputRoot: path.resolve("./test/images/output/"),
             maxAssetSize: 10000,
             transform: path.resolve("./src/components/built-in-transforms/builtin.js"),
@@ -170,6 +175,7 @@ describe('process image via transform', () => {
 
         let result = await imageProcess({ 
             id: 1,
+            type: "file",
             value: img,
             outputRoot: path.resolve("./test/images/output/"),
             maxAssetSize: 10000,

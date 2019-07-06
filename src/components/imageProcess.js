@@ -11,6 +11,14 @@ process.on("message", async (message) => {
     await imageProcess(message)
 })
 
+function isCopyable(type) {
+    switch(type) {
+        case "folder":
+        case "file": return true
+        default: return false
+    }
+}
+
 /**
  * Exported for testing purposes. Will typically be called as a result of receiving
  * a process message. 
@@ -20,9 +28,15 @@ export default async function imageProcess(message) {
     //For performance, assumes that all inputs have already been validated and that
     //the existence of the source has been checked.
 
-    var id = message.id
+    let id = message.id
 
-    var sourcePath = message.value
+    let type = message.type
+
+    if(type === undefined) {
+        throw new Error("'type' cannot be undefined.")
+    }
+
+    let sourcePath = message.value
 
     let maxAssetSize = message.maxAssetSize
 
@@ -56,8 +70,8 @@ export default async function imageProcess(message) {
 
     //For performance reasons, filesystem functions assume that the files they are accessing exist.
 
-    if(transform === null) {
-        //If no transform is selected, then simply copy the file.
+    if(transform === null && isCopyable(type)) {
+        //If no transform is selected, and the file is copyable, then simply copy the file.
 
         var result = {
             _ReactStaticImage: true,
@@ -75,7 +89,10 @@ export default async function imageProcess(message) {
 
     } else {
         var promise = Jimp.read(sourcePath).then(async (image) => {
-            
+
+            //Decode sourcePath in case it's a url
+            sourcePath = decodeURI(sourcePath)
+
             //Provide the image to the transform and obtain a result
             var result = transform.default({ image: new TransformableImage(image, path.basename(sourcePath)), options: transformOptions })
           
@@ -175,7 +192,7 @@ async function copyFile(outputRoot, src, operations, maxAssetSize) {
         operations.push(fs.copyFile(src, outputPath, () => { }))
         
         //This is a url, not a file, so do not resolve
-        return "static/" + path.basename(src)
+        return "/static/" + path.basename(src)
     }
 }
 
@@ -230,7 +247,7 @@ async function copyFile(outputRoot, src, operations, maxAssetSize) {
         }
 
         //This is a url, not a file, so do not resolve
-        return "static/" + transformableImage.getFileName() + "." + hash + transformableImage.getExtension()
+        return "/static/" + transformableImage.getFileName() + "." + hash + transformableImage.getExtension()
     }
 
 }
