@@ -6,8 +6,8 @@
     "license": "MIT",
     "main": "dist/node.api.js",
     "dependencies": {
-        "jimp": "0.6.4",
-        "hash-sum": "1.0.2"
+        "hash-sum": "1.0.2",
+        "jimp": "0.9.3"
     },
     "scripts": {
         "build": "babel src --out-dir ./dist",
@@ -16,14 +16,13 @@
     "devDependencies": {
         "@babel/cli": "7.4.3",
         "@babel/core": "7.4.3",
+        "@babel/plugin-transform-runtime": "7.4.3",
         "@babel/preset-env": "7.4.3",
         "@babel/preset-react": "7.0.0",
-        "@babel/plugin-transform-runtime": "7.4.3",
         "@babel/runtime": "7.4.3"
-
     },
     "babel": {
-        "presets":[
+        "presets": [
             "@babel/preset-env",
             "@babel/preset-react"
         ],
